@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación de Calidad del Aire (AQI)</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f5;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #008cba; /* Azul Ciel */
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 17px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #007bb6;
+        }
+        #resultado {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Clasificación de Calidad del Aire (AQI)</h2>
+        
+        <label for="aqi">Ingresa el valor del AQI:</label>
+        <input type="number" id="aqi" min="0" step="1" placeholder="Ej: 45, 120, 250">
+        
+        <button onclick="clasificarAQI()">Clasificar Calidad del Aire</button>
+        
+        <div id="resultado">Esperando valor...</div>
+    </div>
+
+    <script>
+        // Función para asignar colores y clasificaciones
+        function clasificarAQI() {
+            const aqiInput = document.getElementById('aqi').value;
+            const aqi = parseInt(aqiInput);
+            const resultadoDiv = document.getElementById('resultado');
+            let clasificacion = "";
+            let colorFondo = "";
+            let colorTexto = "";
+
+            // 1. Validar la entrada
+            if (isNaN(aqi) || aqiInput.trim() === "" || aqi < 0) {
+                clasificacion = "Error: Ingresa un AQI válido (número positivo).";
+                colorFondo = '#f8d7da'; // Rojo claro
+                colorTexto = '#721c24'; // Rojo oscuro
+                resultadoDiv.innerHTML = clasificacion;
+                resultadoDiv.style.backgroundColor = colorFondo;
+                resultadoDiv.style.color = colorTexto;
+                return; 
+            }
+
+            // 2. Aplicar la clasificación usando IF-ELSE IF-ELSE
+            
+            // AQI 0-50: Bueno
+            if (aqi <= 50) {
+                clasificacion = "BUENO";
+                colorFondo = '#d4edda'; // Verde claro
+                colorTexto = '#155724'; // Verde oscuro
+            } 
+            // AQI 51-100: Moderado
+            else if (aqi <= 100) {
+                clasificacion = "MODERADO";
+                colorFondo = '#fff3cd'; // Amarillo claro
+                colorTexto = '#856404'; // Amarillo oscuro
+            } 
+            // AQI 101-150: Dañino a grupos sensibles
+            else if (aqi <= 150) {
+                clasificacion = "DAÑINO PARA GRUPOS SENSIBLES";
+                colorFondo = '#fecf9c'; // Naranja suave
+                colorTexto = '#6d4c41'; // Marrón
+            } 
+            // AQI 151-200: Dañino
+            else if (aqi <= 200) {
+                clasificacion = "DAÑINO";
+                colorFondo = '#f5c6cb'; // Rojo rosado
+                colorTexto = '#721c24'; // Rojo oscuro
+            } 
+            // AQI 201-300: Muy Dañino
+            else if (aqi <= 300) {
+                clasificacion = "MUY DAÑINO";
+                colorFondo = '#e6ccff'; // Morado claro
+                colorTexto = '#4a235a'; // Morado oscuro
+            } 
+            // AQI > 300: Peligroso
+            else {
+                clasificacion = "PELIGROSO";
+                colorFondo = '#c20000'; // Rojo fuerte
+                colorTexto = '#ffffff'; // Blanco
+            }
+
+            // 3. Mostrar el resultado
+            resultadoDiv.innerHTML = `
+                AQI Ingresado: **${aqi}**<br>
+                Clasificación: **${clasificacion}**
+            `;
+            resultadoDiv.style.backgroundColor = colorFondo;
+            resultadoDiv.style.color = colorTexto;
+        }
+    </script>
+
+</body>
+</html>

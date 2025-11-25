@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoreo de Nivel de Río</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #e0f7fa; /* Fondo azul claro */
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        h2 {
+            color: #00bcd4; /* Cian medio */
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .instruction {
+            background-color: #e0f2f7;
+            padding: 15px;
+            border-left: 5px solid #00acc1;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 12px;
+            border: 1px solid #00acc1;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #00acc1;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #00838f;
+        }
+        #registros {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #00acc1;
+            border-radius: 5px;
+            background-color: #f0ffff;
+            min-height: 50px;
+        }
+        .registro-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-bottom: 1px dotted #ccc;
+        }
+        .alerta-nivel {
+            color: #dc3545; /* Rojo para alerta */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>💧 Monitoreo de Nivel del Río</h2>
+        
+        <p class="instruction">
+            Se registrará el nivel del río **al menos una vez** antes de preguntar si deseas continuar. Se genera una **ALERTA** si el nivel supera los 3.0 m.
+        </p>
+        
+        <div class="input-group">
+            <label for="nivel">Nivel del Río (metros):</label>
+            <input type="number" id="nivel" step="any" placeholder="Ej: 1.5, 3.2, 0.8">
+            <label for="continuar">¿Deseas registrar otro nivel? (sí / no)</label>
+            <input type="text" id="continuar" placeholder="Escribe 'sí' o 'no'">
+            <button onclick="registrarNivel()">Registrar y Verificar</button>
+        </div>
+
+        <p>Historial de Registros:</p>
+        <div id="registros"></div>
+    </div>
+
+    <script>
+        // Variables de control
+        let continuarRegistro = 'sí';
+        let primerCiclo = true; // Asegura que la lógica se ejecute la primera vez (DO)
+        const registrosDiv = document.getElementById('registros');
+        const UMBRAL = 3.0;
+        
+        // Array para almacenar los registros visualmente
+        let historialRegistros = []; 
+
+        function registrarNivel() {
+            const nivelInput = document.getElementById('nivel');
+            const continuarInput = document.getElementById('continuar');
+            const nivel = parseFloat(nivelInput.value);
+            let mensaje = '';
+            
+            // Si ya se ingresó 'no', no hacer nada
+            if (continuarRegistro.toLowerCase() === 'no') {
+                 alert("El monitoreo ha finalizado.");
+                 return;
+            }
+
+            // 1. Ejecución del cuerpo (DO) - Esto se garantiza al menos una vez
+            if (primerCiclo || continuarRegistro.toLowerCase() === 'sí') {
+                
+                // Validación
+                if (isNaN(nivel) || nivelInput.value.trim() === "") {
+                    alert("Por favor, ingresa un nivel numérico válido.");
+                    return;
+                }
+                
+                // Aplicar la alerta
+                if (nivel > UMBRAL) {
+                    mensaje = `Nivel: ${nivel.toFixed(2)} m. <span class="alerta-nivel">🚨 ALERTA: NIVEL DE RIESGO SUPERADO (${UMBRAL} m)!</span>`;
+                } else {
+                    mensaje = `Nivel: ${nivel.toFixed(2)} m. (Nivel normal)`;
+                }
+                
+                // Almacenar y mostrar registro
+                historialRegistros.push(mensaje);
+                mostrarRegistros();
+
+                // 2. Leer la condición para la próxima iteración (WHILE)
+                continuarRegistro = continuarInput.value.toLowerCase();
+                
+                // Limpiar inputs
+                nivelInput.value = '';
+                continuarInput.value = '';
+                nivelInput.focus(); 
+                
+                primerCiclo = false;
+
+                // 3. Evaluar la condición (WHILE) y detener si es necesario
+                if (continuarRegistro === 'no') {
+                    nivelInput.disabled = true;
+                    continuarInput.disabled = true;
+                    document.querySelector('button').disabled = true;
+                    nivelInput.placeholder = "Monitoreo finalizado.";
+                    registrosDiv.innerHTML += '<div class="registro-item">🛑 **Monitoreo Terminado**</div>';
+                }
+            } 
+        }
+        
+        function mostrarRegistros() {
+            registrosDiv.innerHTML = ''; // Limpiar
+            // Mostrar todos los registros
+            for (let i = 0; i < historialRegistros.length; i++) {
+                registrosDiv.innerHTML += `<div class="registro-item">Lectura ${i + 1}: ${historialRegistros[i]}</div>`;
+            }
+        }
+        
+        // Asegurar el focus inicial
+        document.addEventListener('DOMContentLoaded', () => {
+             document.getElementById('nivel').focus();
+        });
+    </script>
+
+</body>
+</html>

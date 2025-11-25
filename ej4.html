@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación de Residuos</title>
+    <style>
+        body {
+            font-family: 'Century Gothic', sans-serif;
+            margin: 20px;
+            background-color: #f7f9f9;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .code-list {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .code-list li {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #2ecc71; /* Verde esmeralda */
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        #resultado {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .residuo-name {
+            font-size: 1.1em;
+        }
+        .contenedor-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            border: 1px solid #333;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Clasificación de Residuos por Código</h2>
+        
+        <ul class="code-list">
+            <li>1: Orgánico</li>
+            <li>2: Plástico</li>
+            <li>3: Papel/Cartón</li>
+            <li>4: Vidrio</li>
+        </ul>
+        
+        <label for="codigo">Ingresa el Código (1-4):</label>
+        <input type="number" id="codigo" min="1" max="4" placeholder="Código del tipo de residuo">
+        
+        <button onclick="clasificarResiduo()">Clasificar</button>
+        
+        <div id="resultado">Esperando código...</div>
+    </div>
+
+    <script>
+        function clasificarResiduo() {
+            // 1. Obtener el valor ingresado por el usuario
+            const codigoInput = document.getElementById('codigo').value;
+            // Convertir a entero
+            const codigo = parseInt(codigoInput);
+            const resultadoDiv = document.getElementById('resultado');
+            let tipoResiduo = "";
+            let colorContenedor = "";
+            let colorHex = "#ecf0f1"; // Color por defecto
+
+            // 2. Validación simple de entrada
+            if (isNaN(codigo) || codigoInput.trim() === "" || codigo < 1 || codigo > 4) {
+                tipoResiduo = "Código Inválido";
+                colorContenedor = "Usa un código entre 1 y 4.";
+                colorHex = '#e74c3c'; // Rojo para error
+            } else {
+                
+                // 3. Aplicar la estructura SWITCH
+                switch (codigo) {
+                    case 1:
+                        tipoResiduo = "Orgánico";
+                        colorContenedor = "Contenedor Café/Marrón";
+                        colorHex = '#795548';
+                        break;
+                    case 2:
+                        tipoResiduo = "Plástico";
+                        colorContenedor = "Contenedor Amarillo";
+                        colorHex = '#ffeb3b';
+                        break;
+                    case 3:
+                        tipoResiduo = "Papel/Cartón";
+                        colorContenedor = "Contenedor Azul";
+                        colorHex = '#3498db';
+                        break;
+                    case 4:
+                        tipoResiduo = "Vidrio";
+                        colorContenedor = "Contenedor Verde";
+                        colorHex = '#2ecc71';
+                        break;
+                    // Note: 'default' ya está manejado en la validación inicial, 
+                    // pero se podría usar aquí si no hubiera validación previa.
+                }
+            }
+
+            // 4. Mostrar el resultado
+            resultadoDiv.innerHTML = `
+                Código: **${codigo}**<br>
+                Tipo de Residuo: <span class="residuo-name">${tipoResiduo}</span><br>
+                Destino: **${colorContenedor}** <span class="contenedor-color" style="background-color: ${colorHex};"></span>
+            `;
+            // Establecer el color de fondo del div resultado basado en el código
+            resultadoDiv.style.backgroundColor = colorHex + '33'; // color más transparente
+        }
+    </script>
+
+</body>
+</html>
